@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: basic-blue
+  namespace: ${k8s_ns}
+  labels:
+    app: basic-blue
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: restful
+  selector:
+    app: basic-blue
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: basic-blue
+  namespace: ${k8s_ns}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      name: basic-blue
+  template:
+    metadata:
+      labels:
+        name: basic-blue
+        app: basic-blue
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - suzhou
+                      - wuxi
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - basic-blue
+                topologyKey: kubernetes.io/hostname
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: basic-blue
+      tolerations:
+        - key: node.pool.kubernetes.io
+          operator: Equal
+          value: p15f1
+          effect: NoSchedule
+      restartPolicy: Always
+      volumes:
+        - name: safebox-logs
+          hostPath:
+            path: /apps/logs/bcsec/safebox/normal/basic-blue
+      containers:
+        - name: basic-blue
+          image: ${docker_prefix}/basic-blue:${tag}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /api/web/code/demo/common/health
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 240
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /api/web/code/demo/common/health
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 240
+          resources:
+            requests:
+              cpu: '0.3'
+              memory: 800Mi
+            limits:
+              cpu: '0.3'
+              memory: 1Gi
+          volumeMounts:
+            - mountPath: /apps/logs/bcsec/safebox
+              name: safebox-logs
+          ports:
+            - containerPort: 8080
+          env:
+            - name: spring_cloud_zookeeper_enabled
+              value: "false"
+            - name: spring_cloud_zookeeper_connectString
+              value: ""
+            - name: spring_cloud_zookeeper_auth_info
+              value: ""
+            - name: spring_profiles_active
+              value: "${spring_profiles_active}"

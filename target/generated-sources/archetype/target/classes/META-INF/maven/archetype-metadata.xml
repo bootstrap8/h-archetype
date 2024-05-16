@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor xsi:schemaLocation="https://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.1.0 http://maven.apache.org/xsd/archetype-descriptor-1.1.0.xsd" name="bc-archetype"
+  xmlns="https://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <fileSets>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>src/main/cicd</directory>
+      <includes>
+        <include>**/*.sh</include>
+        <include>**/*.txt</include>
+        <include>**/*.groovy</include>
+        <include>**/*.hosts</include>
+        <include>**/*.yml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.properties</include>
+        <include>**/*.yml</include>
+        <include>**/*.sql</include>
+      </includes>
+    </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>**/*.png</include>
+        <include>**/*.jpg</include>
+        <include>**/*.jpeg</include>
+        <include>**/*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/assembly</directory>
+      <includes>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/deploy</directory>
+      <includes>
+        <include>**/*.</include>
+        <include>**/*.sh</include>
+        <include>**/*.options</include>
+        <include>**/*.yaml</include>
+        <include>docker/Dockerfile</include>
+      </includes>
+    </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory></directory>
+      <includes>
+        <include>README.md</include>
+        <include>CHANGELOG.md</include>
+        <include>LICENSE</include>
+        <include><![CDATA[.gitignore]]></include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <requiredProperties>
+    <requiredProperty key="appPort">
+      <defaultValue>8080</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="module">
+      <defaultValue>example</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="product">
+      <defaultValue>wafc</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="author">
+      <defaultValue>hbq969@gmail.com</defaultValue>
+    </requiredProperty>
+  </requiredProperties>
+</archetype-descriptor>
