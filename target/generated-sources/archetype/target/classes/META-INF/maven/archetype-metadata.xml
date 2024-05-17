@@ -39,6 +39,12 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources/static</directory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/assembly</directory>
       <includes>
         <include>**/*.xml</include>
@@ -72,7 +78,7 @@
       <defaultValue>example</defaultValue>
     </requiredProperty>
     <requiredProperty key="product">
-      <defaultValue>wafc</defaultValue>
+      <defaultValue>code</defaultValue>
     </requiredProperty>
     <requiredProperty key="author">
       <defaultValue>hbq969@gmail.com</defaultValue>

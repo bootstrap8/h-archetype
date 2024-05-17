@@ -20,8 +20,8 @@ spring:
   mvc:
     resource-handler-registry:
       entries:
-        - handlers: /ui-dict/**
-          locations: classpath:/static/ui-dict/
+        - handlers: /ui-demo/**
+          locations: classpath:/static/ui-demo/
 
   main:
     allow-bean-definition-overriding: true

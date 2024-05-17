@@ -112,7 +112,8 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <include>**/*</include>
+          <include>*.*</include>
+          <include>static/ui-${artifactId}/</include>
         </includes>
       </resource>
     </resources>

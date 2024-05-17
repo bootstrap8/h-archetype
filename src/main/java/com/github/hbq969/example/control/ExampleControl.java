@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "示例接口")
 @Slf4j
-@RequestMapping(path = "/example")
+@RequestMapping(path = "/ui-h-demo/example")
 public class ExampleControl {
 
   @Autowired
@@ -61,6 +61,13 @@ public class ExampleControl {
   public ReturnMessage<?> queryBaidu() {
     log.info("百度查询");
     return ReturnMessage.success(demoService.query());
+  }
+
+  @ApiOperation("测试")
+  @RequestMapping(path = "/test", method = RequestMethod.GET)
+  @ResponseBody
+  public ReturnMessage<?> test() {
+    return ReturnMessage.success("测试");
   }
 
 }
