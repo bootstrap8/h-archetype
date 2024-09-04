@@ -6,7 +6,7 @@ if [[ -f "../setenv.sh" ]];then
 . ../setenv.sh
 fi
 
-name=${artifactId}-${gray}
+name=${artifactId}
 
 echo "Find Kubernetes Pods ..."
 pods=`kubectl get pods -n ${k8s_ns}|grep ${name}|grep Running|awk '{print $1}'`

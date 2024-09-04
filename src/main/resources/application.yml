@@ -1,7 +1,15 @@
 server:
   port: ${appPort}
   servlet:
-    context-path: /api/hbq/${product}/${module}
+    context-path: /${artifactId}
+    session:
+      cookie:
+        http-only: true
+        max-age: ${login.cookie-max-age-sec}
+        secure: false
+        same-site: strict
+        path: /
+      timeout: 30m
 
 mybatis:
   mapper-locations:
@@ -16,25 +24,40 @@ mybatis-plus:
 spring:
   application:
     name: ${artifactId}
-  # 添加字典管理控制台页面
-  mvc:
-    resource-handler-registry:
-      entries:
-        - handlers: /ui-demo/**
-          locations: classpath:/static/ui-demo/
-
   main:
     allow-bean-definition-overriding: true
-
   messages:
     basename: i18n/message
     encoding: UTF-8
+  mvc:
+    interceptors:
+      mdc:
+        enabled: true
+      header:
+        enabled: false
+      api-safe:
+        enabled: true
+        include-path-patterns:
+          - /hbq969-dict/**
+          - /hbq969-tabula/**
+        header-name: api-safe-token
+        header-value-regex: 123456
+      resource-handler-registry:
+        entries:
+          - handlers: /hbq969-dict/**
+            locations: classpath:/static/hbq969-dict/
+          - handlers: /hbq969-tabula/**
+            locations: classpath:/static/hbq969-tabula/
+          - handlers: /${module}-ui/**
+            locations: classpath:/static/${module}-ui/
+        enabled: true
 
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     dynamic:
       enabled: true
-      base-packages: com.github.hbq969
+      base-packages:
+        - com.github.hbq969
       default-lookup-key: hikari
     hikari:
       jdbc-url: jdbc:h2:mem:local
@@ -87,25 +110,17 @@ spring:
       concurrency: 1
       poll-timeout: 10s
 
-  # 接口缓存
-  cache:
-    ext:
-      enable: true
-      juc:
-        allow-null-values: true
-        max-capacity: 2000
-
 knife4j:
-  enable: true
+  enable: false
   production: false
   basic:
-    enable: true
+    enable: false
     username: ${spring.application.name}
     password: 123456
 
 swagger:
+  base-package: com
   api-info:
-    enable: true
     title: web应用Restful API
     description: web应用Restful API
     termsOfServiceUrl: http://127.0.0.1:${server.port}
@@ -113,43 +128,53 @@ swagger:
     license: Apache LICENSE-2.0
     licenseUrl: https://apache.org/licenses/LICENSE-2.0.txt
 
-# 数据字典管理
 dict:
   enabled: true
-  dictToken: hbq969@gmail.com
   reload:
-    cron: 0,30 * * * * *
+    cron: 0 */30 * * * *
   map-key-prefix: fmt
 
-# 分布式锁
-lock:
-  spi:
-    redis:
-      enabled: false
-      standard:
-        host: docker.for.mac.host.internal
-        port: 6379
-
-# restful接口加解密
 encrypt:
   config:
     enabled: true
-  restful:
-    aes:
-      enabled: false
-      charset: utf-8
-      show-log: true
-      key: x
-    rsa:
-      enabled: false
-      charset: utf-8
-      show-log: true
-      private-key: x
-      public-key: x
 
-# restful接口日志记录
 advice:
   log:
     enabled: true
   restful-limit:
     enabled: true
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+    jmx:
+      exposure:
+        exclude: '*'
+  endpoint:
+    health:
+      enabled: true
+
+tabula:
+  enabled: true
+  dialect: mysql
+  schema: openstack
+  open-edit-delete: true
+
+login:
+  enabled: false
+  cookie-max-age-sec: 1800
+  exclude-urls:
+    - "/**/*.js"
+    - "/**/*.css"
+    - "/**/*.png"
+    - "/**/*.jpg"
+    - "/**/*.map"
+    - "/**/*.html"
+    - "/**/*.ico"
+    - "/**/login"
+    - "/**/logout"
+    - "/**/error"
+  dialect: embedded

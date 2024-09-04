@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import { ElLoading } from 'element-plus'
+import router from "@/router"
 
 console.log('环境信息: ', process.env.NODE_ENV);
 
@@ -51,6 +52,10 @@ export default (config: any) => {
     // 对响应错误做点什么
     // 关闭过度效果
     loadingInstance.close()
+    if (error.response.status == 401) {
+      router.push({path: '/app/login'})
+      return Promise.resolve({data: {state: 'ERROR', body: '会话失效'}});
+    }
     return Promise.reject(error);
   });
 

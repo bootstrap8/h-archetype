@@ -7,12 +7,12 @@
     <repository>
       <id>nexus-releases</id>
       <name>Nexus Releases Repository</name>
-      <url>http://nexus.cmss.com:8081/repository/bcop-releases/</url>
+      <url>http://nexus.cmss.com:8081/repository/dsp-release/</url>
     </repository>
     <snapshotRepository>
       <id>nexus-snapshots</id>
       <name>Nexus Snapshots Repository</name>
-      <url>http://nexus.cmss.com:8081/repository/bcop-snapshots/</url>
+      <url>http://nexus.cmss.com:8081/repository/dsp-snapshot/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -52,6 +52,11 @@
     <dependency>
       <groupId>com.github.hbq969</groupId>
       <artifactId>h-dict</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.hbq969</groupId>
+      <artifactId>h-tabula</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <!--    <dependency>-->
@@ -113,7 +118,7 @@
         <directory>src/main/resources</directory>
         <includes>
           <include>*.*</include>
-          <include>static/ui-${artifactId}/</include>
+          <include>static/${module}-ui/</include>
         </includes>
       </resource>
     </resources>

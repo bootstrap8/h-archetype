@@ -24,6 +24,12 @@ if [[ -n "${mid}" ]]; then
   echo "${tag},${mid} was uninstalled."
 fi
 
-cp Dockerfile ../../
+if [[ "$platform" == "linux/arm64"* ]]; then
+    cat Dockerfile |  sed "s/# FROM anolis-registry.cn-zhangjiakou.cr.aliyuncs.com\/openanolis\/openjdk@sha256:28a70636419473cd5e40fc103dfb11beb62bc9fff235d968ca5098f09a51a093/FROM anolis-registry.cn-zhangjiakou.cr.aliyuncs.com\/openanolis\/openjdk@sha256:28a70636419473cd5e40fc103dfb11beb62bc9fff235d968ca5098f09a51a093/g" > ../../Dockerfile
+else
+    cat Dockerfile | sed "s/# FROM anolis-registry.cn-zhangjiakou.cr.aliyuncs.com\/openanolis\/openjdk@sha256:2d10a2db5629ee59137f3e5cef5bbb6ffc0fe80426fac1603d830144e1dddcff/FROM anolis-registry.cn-zhangjiakou.cr.aliyuncs.com\/openanolis\/openjdk@sha256:2d10a2db5629ee59137f3e5cef5bbb6ffc0fe80426fac1603d830144e1dddcff/g" > ../../Dockerfile
+fi
+
+#cp Dockerfile ../../
 echo "Start Docker Images Building ..."
 docker build --platform ${platform} -t ${docker_prefix}/${tag} ../../

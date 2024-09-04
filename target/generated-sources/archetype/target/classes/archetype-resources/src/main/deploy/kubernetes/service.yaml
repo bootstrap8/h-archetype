@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${artifactId}-${gray}
+  name: ${artifactId}
   namespace: ${k8s_ns}
   labels:
-    app: ${artifactId}-${gray}
+    app: ${artifactId}
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -14,63 +14,63 @@ spec:
       protocol: TCP
       name: restful
   selector:
-    app: ${artifactId}-${gray}
+    app: ${artifactId}
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: ${artifactId}-${gray}
+  name: ${artifactId}-deployment
   namespace: ${k8s_ns}
 spec:
   replicas: 1
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      name: ${artifactId}-${gray}
+      name: ${artifactId}
   template:
     metadata:
       labels:
-        name: ${artifactId}-${gray}
-        app: ${artifactId}-${gray}
+        name: ${artifactId}
+        app: ${artifactId}
     spec:
       restartPolicy: Always
       volumes:
-        - name: safebox-logs
+        - name: app-logs
           hostPath:
-            path: /apps/logs/bcsec/safebox/normal/${artifactId}-${gray}
+            path: /tmp/apps/${artifactId}/logs
       containers:
-        - name: ${artifactId}-${gray}
+        - name: ${artifactId}
           image: ${docker_prefix}/${artifactId}:${tag}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
               port: ${appPort}
-              path: /api/web/${product}/${module}/common/health
+              path: /${artifactId}/common/health
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 240
           readinessProbe:
             httpGet:
               port: ${appPort}
-              path: /api/web/${product}/${module}/common/health
+              path: /${artifactId}/common/health
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 240
           resources:
             requests:
-              cpu: '0.3'
-              memory: 800Mi
-            limits:
-              cpu: '0.3'
+              cpu: '1'
               memory: 1Gi
+            limits:
+              cpu: '1'
+              memory: 1.5Gi
           volumeMounts:
-            - mountPath: /apps/logs/bcsec/safebox
-              name: safebox-logs
+            - mountPath: /opt/app/${artifactId}/logs
+              name: app-logs
           ports:
             - containerPort: ${appPort}
           env:

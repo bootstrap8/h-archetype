@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="it.pkg.code.demo.login.dao.LoginDao">
+    <update id="createUsers">
+        CREATE TABLE `h_users`
+        (
+            `id`         int AUTO_INCREMENT PRIMARY KEY comment '主键',
+            `username`   VARCHAR(255) NOT NULL UNIQUE comment '账号名',
+            `password`   VARCHAR(255) NOT NULL comment '密码',
+            `role_id`    NUMERIC(10) comment '角色ID',
+            `created_at` NUMERIC(20) comment '创建时间',
+            `updated_at` NUMERIC(20) comment '更新时间'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createRoles">
+        CREATE TABLE `h_roles`
+        (
+            `id`          int AUTO_INCREMENT PRIMARY KEY comment '角色ID',
+            `name`        VARCHAR(255) NOT NULL comment '角色名称',
+            `description` VARCHAR(500) comment '角色描述',
+            `created_at`  NUMERIC(20) comment '创建时间',
+            `updated_at`  NUMERIC(20) comment '更新时间'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createMenus">
+        CREATE TABLE `h_menus`
+        (
+            `id`          int AUTO_INCREMENT PRIMARY KEY comment '菜单ID',
+            `name`        VARCHAR(255) NOT NULL comment '菜单名称',
+            `url`         VARCHAR(255) comment '菜单链接',
+            `parent_id`   NUMERIC(10) DEFAULT -1 comment '父菜单ID',
+            `order_index` NUMERIC(10) DEFAULT 0 comment '菜单顺序',
+            `created_at`  NUMERIC(20) comment '创建时间',
+            `updated_at`  NUMERIC(20) comment '修改时间'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createRoleMenus">
+        CREATE TABLE `h_role_menus`
+        (
+            `id`      int AUTO_INCREMENT PRIMARY KEY comment '主键',
+            `role_id` NUMERIC(20) NOT NULL comment '角色ID',
+            `menu_id` NUMERIC(20) NOT NULL comment '菜单ID'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+</mapper>

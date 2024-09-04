@@ -11,8 +11,8 @@ export spring_profiles_active="default"
 if [ "${op}" == "docker-build" ];then
 echo
 echo "-- please <select/input> running platform --"
-echo "1) linux/amd64"
-echo "2) linux/arm64"
+echo "1) x86"
+echo "2) ARM"
 echo "if you input Enter, will select 2"
 echo
 # shellcheck disable=SC2162
@@ -161,32 +161,4 @@ esac
 fi
 echo "you input kubernetes namespace: ${k8s_ns}"
 export k8s_ns=${k8s_ns}
-fi
-
-if [ "${op}" == "k8s-apply" -o "${op}" == "k8s-delete" -o "${op}" == "k8s-check" -o "${op}" == "k8s-describe" ];then
-echo
-echo "-- please <select/input> [gray tag] --"
-echo "1) green"
-echo "2) blue"
-echo "if you input Enter, will set green"
-echo
-# shellcheck disable=SC2162
-read -p "> " inputGray
-if [ -z "${inputGray}" ]; then
-  gray="green"
-else
-case ${inputGray} in
-  1)
-  gray="green";
-  ;;
-  2)
-  gray="blue";
-  ;;
-  *)
-  gray=${inputGray}
-  ;;
-esac
-fi
-echo "you input gray tag: ${gray}"
-export gray=${gray}
 fi

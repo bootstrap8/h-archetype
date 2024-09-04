@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "示例接口")
 @Slf4j
-@RequestMapping(path = "/ui-${artifactId}/example")
+@RequestMapping(path = "/example")
 public class ExampleControl {
 
   @Autowired

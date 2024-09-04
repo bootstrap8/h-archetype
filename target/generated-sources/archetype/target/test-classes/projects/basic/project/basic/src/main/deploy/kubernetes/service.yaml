@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: basic-${gray}
+  name: basic
   namespace: ${k8s_ns}
   labels:
-    app: basic-${gray}
+    app: basic
 spec:
   type: ClusterIP
   sessionAffinity: None
@@ -14,63 +14,63 @@ spec:
       protocol: TCP
       name: restful
   selector:
-    app: basic-${gray}
+    app: basic
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: basic-${gray}
+  name: basic-deployment
   namespace: ${k8s_ns}
 spec:
   replicas: 1
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      name: basic-${gray}
+      name: basic
   template:
     metadata:
       labels:
-        name: basic-${gray}
-        app: basic-${gray}
+        name: basic
+        app: basic
     spec:
       restartPolicy: Always
       volumes:
-        - name: safebox-logs
+        - name: app-logs
           hostPath:
-            path: /apps/logs/bcsec/safebox/normal/basic-${gray}
+            path: /tmp/apps/basic/logs
       containers:
-        - name: basic-${gray}
+        - name: basic
           image: ${docker_prefix}/basic:${tag}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
               port: 8080
-              path: /api/web/code/demo/common/health
+              path: /basic/common/health
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 240
           readinessProbe:
             httpGet:
               port: 8080
-              path: /api/web/code/demo/common/health
+              path: /basic/common/health
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 240
           resources:
             requests:
-              cpu: '0.3'
-              memory: 800Mi
-            limits:
-              cpu: '0.3'
+              cpu: '1'
               memory: 1Gi
+            limits:
+              cpu: '1'
+              memory: 1.5Gi
           volumeMounts:
-            - mountPath: /apps/logs/bcsec/safebox
-              name: safebox-logs
+            - mountPath: /opt/app/basic/logs
+              name: app-logs
           ports:
             - containerPort: 8080
           env:

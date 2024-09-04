@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="it.pkg.code.demo.login.dao.LoginDao">
+    <update id="createUsers">
+        CREATE TABLE h_users
+        (
+            id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR2 (255) NOT NULL UNIQUE,
+            password VARCHAR2 (255) NOT NULL,
+            role_id NUMBER (10),
+            created_at NUMBER (20),
+            updated_at NUMBER (20)
+        )
+    </update>
+
+    <update id="createRoles">
+        CREATE TABLE h_roles
+        (
+            id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR2 (255) NOT NULL,
+            description VARCHAR2 (500),
+            created_at NUMBER (20),
+            updated_at NUMBER (20)
+        )
+    </update>
+
+    <update id="createMenus">
+        CREATE TABLE h_menus
+        (
+            id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR2 (255) NOT NULL,
+            url VARCHAR2 (255),
+            parent_id   NUMERIC(10) DEFAULT -1,
+            order_index NUMERIC(10) DEFAULT 0,
+            created_at NUMBER (20),
+            updated_at NUMBER (20)
+        )
+    </update>
+
+    <update id="createRoleMenus">
+        CREATE TABLE h_role_menus
+        (
+            id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
+            role_id NUMBER (20) NOT NULL,
+            menu_id NUMBER (20) NOT NULL
+        )
+    </update>
+</mapper>

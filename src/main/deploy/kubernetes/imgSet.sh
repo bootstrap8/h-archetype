@@ -11,7 +11,7 @@ if [[ -z "$k8s_api_version" ]]; then
 fi
 echo "k8s_api_version:$k8s_api_version"
 
-APP_NAME=${artifactId}-${gray}
+APP_NAME=${artifactId}-deployment
 
 kubectl set image deployment ${APP_NAME} ${APP_NAME}=${docker_prefix}/${artifactId}:${tag} -n ${k8s_ns}
 

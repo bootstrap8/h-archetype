@@ -7,6 +7,6 @@
     select field_name AS "fieldName",
            field_desc AS "fieldDesc",
            enum_type  AS "enumType"
-    from bc_dic_info
+    from h_dict_base
   </select>
 </mapper>

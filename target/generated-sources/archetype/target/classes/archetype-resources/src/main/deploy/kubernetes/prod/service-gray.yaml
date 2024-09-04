@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${artifactId}-gray
+  namespace: ${k8s_ns}
+  labels:
+    app: ${artifactId}-gray
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - port: ${appPort}
+      targetPort: ${appPort}
+      protocol: TCP
+      name: restful
+  selector:
+    app: ${artifactId}-gray
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ${artifactId}-gray-deployment
+  namespace: ${k8s_ns}
+spec:
+  replicas: ${replicas}
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      name: ${artifactId}-gray
+  template:
+    metadata:
+      labels:
+        name: ${artifactId}-gray
+        app: ${artifactId}-gray
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - suzhou
+                      - wuxi
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - ${artifactId}-gray
+                topologyKey: kubernetes.io/hostname
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: ${artifactId}-gray
+      tolerations:
+        - key: node.pool.kubernetes.io
+          operator: Equal
+          value: p15f1
+          effect: NoSchedule
+      restartPolicy: Always
+      volumes:
+        - name: app-logs
+          hostPath:
+            path: /tmp/apps/${artifactId}-gray/logs
+      containers:
+        - name: ${artifactId}-gray-deployment
+          image: ${docker_prefix}/${artifactId}-gray:${tag}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              port: ${appPort}
+              path: /${artifactId}/common/health
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 240
+          readinessProbe:
+            httpGet:
+              port: ${appPort}
+              path: /${artifactId}/common/health
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 240
+          resources:
+            requests:
+              cpu: '1'
+              memory: 1Gi
+            limits:
+              cpu: '1'
+              memory: 1.5Gi
+          volumeMounts:
+            - mountPath: /opt/app/${artifactId}/logs
+              name: app-logs
+          ports:
+            - containerPort: ${appPort}
+          env:
+            - name: spring_cloud_zookeeper_enabled
+              value: "false"
+            - name: spring_cloud_zookeeper_connectString
+              value: ""
+            - name: spring_cloud_zookeeper_auth_info
+              value: ""
+            - name: spring_profiles_active
+              value: "${spring_profiles_active}"
+

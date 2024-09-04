@@ -25,6 +25,12 @@ import router from '@/router/index'
 import axios from '@/network/index'
 import {msg, downFile} from '@/utils/Utils'
 
+const formLabelWidth = ref('140px')
+const headerCellStyle = () => {
+  // 添加表头颜色
+  return {backgroundColor: '#f5f5f5', color: '#333', fontWeight: 'bold'};
+}
+
 const form = reactive({
 });
 
@@ -34,13 +40,11 @@ const data = reactive({
 // 查询字典列表
 const test = () => {
   axios({
-    url: '/example/test',
+    url: '/hello',
     method: 'get',
     data: form
   }).then((res: any) => {
-    //if (res.data.state == "OK") {
-    //}
-    console.log('{}',res)
+    alert(res.data)
   }).catch((err: Error) => {
     msg('请求异常', 'error')
   })
@@ -49,7 +53,6 @@ const test = () => {
 onMounted(()=>{
   test()
 })
-
 
 </script>
 

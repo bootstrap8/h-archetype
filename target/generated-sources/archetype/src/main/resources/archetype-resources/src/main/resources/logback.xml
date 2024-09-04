@@ -13,7 +13,7 @@
             <level>INFO</level>
         </filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -27,7 +27,7 @@
             <MaxHistory>3</MaxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -54,7 +54,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -69,7 +69,7 @@
             <MaxHistory>3</MaxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="trace-console" class="ch.qos.logback.core.ConsoleAppender">
@@ -79,7 +79,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -102,12 +102,12 @@
             <MaxHistory>3</MaxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{50} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{requestId}] %logger{20} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <!-- 定义应用INFO及以下级别日志输出 -->
-    <logger name="com.chinamobile" level="INFO">
+    <logger name="com" level="INFO">
         <appender-ref ref="info"/>
     </logger>
     <logger name="org" level="INFO">
@@ -115,7 +115,7 @@
     </logger>
 
     <!-- 定义应用DEBUG及级别日志输出 -->
-    <logger name="com.chinamobile" level="DEBUG">
+    <logger name="com" level="DEBUG">
         <appender-ref ref="ibatis-file"/>
         <appender-ref ref="debug-console"/>
         <appender-ref ref="debug-file"/>

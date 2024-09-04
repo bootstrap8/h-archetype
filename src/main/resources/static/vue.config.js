@@ -1,12 +1,12 @@
 const {defineConfig} = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
-  outputDir: 'ui-demo',
+  outputDir: '${module}-ui',
   publicPath: './',
   devServer: {
     proxy: {
       '/dev': {
-        target: 'http://localhost:30150',
+        target: `http://localhost:${appPort}`,
         changeOrigin: true,
         secure: false,
         pathRewrite: { '^/dev': '' },
