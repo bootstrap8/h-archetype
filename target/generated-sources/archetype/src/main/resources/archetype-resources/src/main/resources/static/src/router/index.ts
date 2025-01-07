@@ -12,9 +12,14 @@ const routes = [
     component: () => import('@/views/login/login.vue')
   },
   {
-    path: '/app/main',
-    name: '主页面',
-    component: () => import('@/views/login/main.vue')
+    path: '/app/main1',
+    name: '主页面(菜单在顶部)',
+    component: () => import('@/views/login/main1.vue')
+  },
+  {
+    path: '/app/main2',
+    name: '主页面(菜单在左侧)',
+    component: () => import('@/views/login/main2.vue')
   },
   {
     path: '/app/system/role',

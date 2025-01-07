@@ -1,5 +1,6 @@
 package com.github.hbq969.example.login.ctrl;
 
+import com.github.hbq969.code.common.encrypt.ext.config.Decrypt;
 import com.github.hbq969.code.common.restful.ReturnMessage;
 import com.github.hbq969.example.login.model.LoginInfo;
 import com.github.hbq969.example.login.model.UserInfo;
@@ -27,6 +28,7 @@ public class LoginCtrl {
     @ApiOperation("登录")
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     @ResponseBody
+    @Decrypt
     public ReturnMessage<?> login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginInfo info) {
         loginService.login(info, request, response);
         return ReturnMessage.success("登录成功");

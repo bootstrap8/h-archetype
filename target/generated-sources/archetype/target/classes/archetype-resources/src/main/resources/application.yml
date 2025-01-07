@@ -134,6 +134,11 @@ dict:
 encrypt:
   config:
     enabled: true
+  restful:
+    enabled: true
+    aes:
+      key: DC2EE8931E434A44
+      show-log: true
 
 advice:
   log:

@@ -31,3 +31,9 @@ mvn archetype:generate -DarchetypeGroupId=com.github.hbq969 -DarchetypeArtifactI
 | version             | 待创建工程版本                                               | 1.0-SNAPSHOT      |
 | appPort             | 微服务监听端口<br/>尽量使用30000-32767之间的端口号           | 30000             |
 | author              | 作者                                                         | hbq969@gmail.com  |
+
+# 待办事项
+- [ ] 菜单动态生成  
+- [ ] tab页需要调整
+- [ ] 右上角增加时间显示
+- [ ] 面包屑动态处理

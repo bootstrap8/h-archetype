@@ -102,7 +102,7 @@ function confirmAnswer() {
       headers: {
         'Content-Type': 'application/json;charset=utf8'
       },
-      data: form
+      data: body
     }).then((res: any) => {
       if (res.data.state == 'OK') {
         router.push({path: '/app/main'})
