@@ -87,8 +87,10 @@ public class RoleCtrl {
         List<Map> conf = loginService.queryRoleMenus(id);
         Set<Long> set = conf.stream().map(m -> MapUtils.getLong(m, "key")).collect(Collectors.toSet());
         roleMenu.setConf(set);
+        Map<Long, String> level1Map = loginService.queryAllMenuList()
+                .stream().collect(Collectors.toMap(m -> m.getId(), m -> m.getName()));
         roleMenu.setAll(loginService.queryMenuList(-1, -1, new MenuEntity()).getList().stream()
-                .map(m -> ImmutableMap.of("key", m.getId(), "label", m.getName(), "disabled", StringUtils.contains(m.getName(), "系统管理")))
+                .map(m -> ImmutableMap.of("key", m.getId(), "label", m.getMenuLevel() == 2 ? String.join("/", level1Map.get(m.getParentId()), m.getName()) : m.getName()))
                 .collect(Collectors.toList()));
         return ReturnMessage.success(roleMenu);
     }

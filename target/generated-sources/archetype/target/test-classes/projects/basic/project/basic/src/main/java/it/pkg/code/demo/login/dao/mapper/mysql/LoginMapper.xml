@@ -32,8 +32,10 @@
             `id`          int AUTO_INCREMENT PRIMARY KEY comment '菜单ID',
             `name`        VARCHAR(255) NOT NULL comment '菜单名称',
             `url`         VARCHAR(255) comment '菜单链接',
-            `parent_id`   NUMERIC(10) DEFAULT -1 comment '父菜单ID',
-            `order_index` NUMERIC(10) DEFAULT 0 comment '菜单顺序',
+            `parent_id`   NUMERIC(10)  DEFAULT 0 comment '父菜单ID',
+            `menu_level`  NUMERIC(2)   default 1 comment '菜单层级',
+            `order_index` NUMERIC(10)  DEFAULT 0 comment '菜单顺序',
+            `icon_name`   varchar(255) DEFAULT 'LogIcon' comment '菜单图标',
             `created_at`  NUMERIC(20) comment '创建时间',
             `updated_at`  NUMERIC(20) comment '修改时间'
         ) ENGINE = InnoDB
@@ -43,9 +45,9 @@
     <update id="createRoleMenus">
         CREATE TABLE `h_role_menus`
         (
-            `id`      int AUTO_INCREMENT PRIMARY KEY comment '主键',
             `role_id` NUMERIC(20) NOT NULL comment '角色ID',
-            `menu_id` NUMERIC(20) NOT NULL comment '菜单ID'
+            `menu_id` NUMERIC(20) NOT NULL comment '菜单ID',
+            primary key (role_id,menu_id)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>

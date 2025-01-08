@@ -35,5 +35,5 @@ mvn archetype:generate -DarchetypeGroupId=com.github.hbq969 -DarchetypeArtifactI
 # 待办事项
 - [ ] 菜单动态生成  
 - [ ] tab页需要调整
-- [ ] 右上角增加时间显示
+- [x] 右上角增加时间显示
 - [ ] 面包屑动态处理

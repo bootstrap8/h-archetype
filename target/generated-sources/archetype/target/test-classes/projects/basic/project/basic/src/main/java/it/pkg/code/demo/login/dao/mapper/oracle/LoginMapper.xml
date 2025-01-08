@@ -30,8 +30,10 @@
             id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR2 (255) NOT NULL,
             url VARCHAR2 (255),
-            parent_id   NUMERIC(10) DEFAULT -1,
-            order_index NUMERIC(10) DEFAULT 0,
+            parent_id NUMBER (10) DEFAULT 0,
+            menu_level NUMBER (2) DEFAULT 1,
+            order_index NUMBER (10) DEFAULT 0,
+            icon_name varchar2 (255) DEFAULT 'LogIcon',
             created_at NUMBER (20),
             updated_at NUMBER (20)
         )
@@ -40,9 +42,9 @@
     <update id="createRoleMenus">
         CREATE TABLE h_role_menus
         (
-            id NUMBER (20) AUTO_INCREMENT PRIMARY KEY,
             role_id NUMBER (20) NOT NULL,
-            menu_id NUMBER (20) NOT NULL
+            menu_id NUMBER (20) NOT NULL,
+            primary key (role_id,menu_id)
         )
     </update>
 </mapper>

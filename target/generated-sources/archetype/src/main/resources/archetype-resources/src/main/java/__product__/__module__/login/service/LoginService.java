@@ -40,6 +40,8 @@ public interface LoginService {
 
     PageInfo<MenuEntity> queryMenuList(int pageNum, int pageSize, MenuEntity q);
 
+    List<MenuEntity> queryAllMenuList();
+
     void saveMenuEntity(MenuEntity entity);
 
     void updateMenuEntity(MenuEntity entity);

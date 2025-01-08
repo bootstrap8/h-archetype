@@ -4,9 +4,9 @@
 package ${package}.${product}.${module}.login.dao;
 
 import ${package}.${product}.${module}.login.dao.entity.MenuEntity;
-import ${package}.${product}.${module}.login.model.PasswordModify;
 import ${package}.${product}.${module}.login.dao.entity.RoleEntity;
 import ${package}.${product}.${module}.login.dao.entity.UserEntity;
+import ${package}.${product}.${module}.login.model.PasswordModify;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -32,6 +32,8 @@ public interface LoginDao {
     void deleteRoleEntity(@Param("id") Long id);
 
     List<Map> queryRoleMenus(@Param("id") Long id);
+
+    List<MenuEntity> queryRoleMenus2(@Param("id") Long id);
 
     List<UserEntity> queryUserList(UserEntity q);
 

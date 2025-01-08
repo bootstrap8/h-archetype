@@ -1,9 +1,9 @@
 package it.pkg.code.demo.login.dao;
 
 import it.pkg.code.demo.login.dao.entity.MenuEntity;
-import it.pkg.code.demo.login.model.PasswordModify;
 import it.pkg.code.demo.login.dao.entity.RoleEntity;
 import it.pkg.code.demo.login.dao.entity.UserEntity;
+import it.pkg.code.demo.login.model.PasswordModify;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,6 +29,8 @@ public interface LoginDao {
     void deleteRoleEntity(@Param("id") Long id);
 
     List<Map> queryRoleMenus(@Param("id") Long id);
+
+    List<MenuEntity> queryRoleMenus2(@Param("id") Long id);
 
     List<UserEntity> queryUserList(UserEntity q);
 

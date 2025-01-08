@@ -54,6 +54,24 @@
              h_menus b
         where a.role_id = #{id}
           and a.menu_id = b.id
+        order by b.created_at asc
+    </select>
+
+    <select id="queryRoleMenus2" resultType="${package}.${product}.${module}.login.dao.entity.MenuEntity">
+        select b.id          AS "id",
+               b.name        AS "name",
+               b.url         AS "url",
+               b.parent_id   AS "parentId",
+               b.menu_level  AS "menuLevel",
+               b.order_index AS "orderIndex",
+               b.icon_name   AS "iconName",
+               b.created_at  AS "createdAt",
+               b.updated_at  AS "updatedAt"
+        from h_role_menus a,
+             h_menus b
+        where a.role_id = #{id}
+          and a.menu_id = b.id
+        order by b.created_at asc
     </select>
 
     <select id="queryUserList" resultType="${package}.${product}.${module}.login.dao.entity.UserEntity"
@@ -130,7 +148,9 @@
         name AS "name",
         url AS "url",
         parent_id AS "parentId",
+        menu_level AS "menuLevel",
         order_index AS "orderIndex",
+        icon_name AS "iconName",
         created_at AS "createdAt",
         updated_at AS "updatedAt"
         from h_menus
@@ -144,25 +164,24 @@
                 and url like #{urlLike}
             </if>
         </where>
+        order by created_at asc
     </select>
 
     <delete id="saveMenuEntity" parameterType="${package}.${product}.${module}.login.dao.entity.MenuEntity">
-        insert into h_menus(name, url, parent_id, order_index, created_at)
-        values (#{name}, #{url}, #{parentId}, #{orderIndex}, #{createdAt})
+        insert into h_menus(name, url, parent_id, menu_level, icon_name, order_index, created_at)
+        values (#{name}, #{url}, #{parentId}, #{menuLevel}, #{iconName}, #{orderIndex}, #{createdAt})
     </delete>
 
     <update id="updateMenuEntity" parameterType="${package}.${product}.${module}.login.dao.entity.MenuEntity">
         update h_menus
-        <set>
-            <if test="name!=null and name!=''">
-                name = #{name},
-            </if>
-            <if test="url!=null and url!=''">
-                url = #{url},
-            </if>
+        set name        = #{name},
+            url         = #{url},
+            parent_id   = #{parentId},
+            menu_level  = #{menuLevel},
+            icon_name   = #{iconName},
+            order_index = #{orderIndex},
             updated_at=#{updatedAt}
-        </set>
-        where id=#{id}
+        where id = #{id}
     </update>
 
     <delete id="deleteMenuEntity">

@@ -3,7 +3,7 @@ package com.github.hbq969.example.login.ctrl;
 import com.github.hbq969.code.common.encrypt.ext.config.Decrypt;
 import com.github.hbq969.code.common.restful.ReturnMessage;
 import com.github.hbq969.example.login.model.LoginInfo;
-import com.github.hbq969.example.login.model.UserInfo;
+import com.github.hbq969.example.login.model.PermitInfo;
 import com.github.hbq969.example.login.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,7 +45,10 @@ public class LoginCtrl {
     @ApiOperation("获取账号信息")
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     @ResponseBody
-    public ReturnMessage<UserInfo> getUserInfo(HttpServletRequest request) {
-        return ReturnMessage.success(loginService.getUserInfo(request));
+    public ReturnMessage<PermitInfo> getUserInfo(HttpServletRequest request) {
+        PermitInfo info = new PermitInfo();
+        info.setUser(loginService.getUserInfo(request));
+        info.setAllMenus(loginService.queryAllMenuList());
+        return ReturnMessage.success(info);
     }
 }

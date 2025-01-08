@@ -30,6 +30,8 @@ public interface LoginDao {
 
     List<Map> queryRoleMenus(@Param("id") Long id);
 
+    List<MenuEntity> queryRoleMenus2(@Param("id") Long id);
+
     List<UserEntity> queryUserList(UserEntity q);
 
     UserEntity queryUserEntity(@Param("id") Long id);

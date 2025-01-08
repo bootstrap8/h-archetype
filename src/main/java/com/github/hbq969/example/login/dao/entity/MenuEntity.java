@@ -6,6 +6,9 @@ import com.github.hbq969.code.dict.service.api.DictAware;
 import com.github.hbq969.code.dict.service.api.DictModel;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author : hbq969@gmail.com
  * @description : 菜单信息
@@ -16,12 +19,15 @@ public class MenuEntity implements DictModel, DictAware {
     private Long id;
     private String name;
     private String url;
-    private Long parentId = -1L;
+    private Long parentId = 0L;
+    private Integer menuLevel = 1;
     private Integer orderIndex = 0;
+    private String iconName = "LogIcon";
     private Long createdAt;
     private String fmtCreatedAt;
     private Long updatedAt;
     private String fmtUpdatedAt;
+    private List<MenuEntity> menus;
 
     @Override
     public void convertDict(SpringContext context) {
@@ -40,5 +46,12 @@ public class MenuEntity implements DictModel, DictAware {
 
     public void update() {
         this.updatedAt = FormatTime.nowSecs();
+    }
+
+    public void addMenuEntity(MenuEntity menuEntity) {
+        if (menus == null) {
+            menus = new ArrayList<>();
+        }
+        menus.add(menuEntity);
     }
 }

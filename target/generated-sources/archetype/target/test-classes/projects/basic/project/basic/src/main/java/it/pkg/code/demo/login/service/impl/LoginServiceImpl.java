@@ -1,7 +1,9 @@
 package it.pkg.code.demo.login.service.impl;
 
 import com.github.hbq969.code.common.spring.context.SpringContext;
+import com.github.hbq969.code.common.utils.GsonUtils;
 import com.github.hbq969.code.common.utils.InitScriptUtils;
+import com.github.hbq969.code.dict.service.api.impl.MapDictHelperImpl;
 import it.pkg.code.demo.config.Config;
 import it.pkg.code.demo.login.dao.LoginDao;
 import it.pkg.code.demo.login.dao.entity.MenuEntity;
@@ -18,6 +20,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +39,12 @@ import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @ConditionalOnProperty(prefix = "login", name = "enabled", havingValue = "true")
 @Service("basic-LoginServiceImpl")
@@ -52,21 +60,19 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     @Autowired
     private Config conf;
 
+    @Autowired
+    private MapDictHelperImpl dict;
+
     private Cache<String, HttpSession> sessions;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         initialData();
         log.info("配置的cookie、会话超时时间: {} 秒。", conf.getCookieMaxAgeSec());
-        this.sessions = CacheBuilder.newBuilder()
-                .maximumSize(500)
-                .initialCapacity(100)
-                .concurrencyLevel(10)
-                .expireAfterAccess(conf.getCookieMaxAgeSec(), TimeUnit.SECONDS)
-                .removalListener((RemovalListener<String, HttpSession>) notif -> {
-                    log.info("session自动过期，sid: {}", notif.getKey());
-                    notif.getValue().invalidate();
-                }).build();
+        this.sessions = CacheBuilder.newBuilder().maximumSize(500).initialCapacity(100).concurrencyLevel(10).expireAfterAccess(conf.getCookieMaxAgeSec(), TimeUnit.SECONDS).removalListener((RemovalListener<String, HttpSession>) notif -> {
+            log.info("session自动过期，sid: {}", notif.getKey());
+            notif.getValue().invalidate();
+        }).build();
     }
 
     private void initialData() {
@@ -86,7 +92,9 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
             loginDao.createRoleMenus();
         } catch (Exception e) {
         }
-        InitScriptUtils.initial(context, "/", "login-data.sql", null, StandardCharsets.UTF_8, null);
+        InitScriptUtils.initial(context, "/", "login-data.sql", null, StandardCharsets.UTF_8, () -> {
+            dict.reloadImmediately();
+        });
     }
 
     @Override
@@ -142,6 +150,8 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     public void updateUserEntity(UserEntity entity) {
         entity.update();
         loginDao.updateUserEntity(entity);
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        resetSessionUserInfo(sra.getRequest(), null);
     }
 
     @Override
@@ -176,6 +186,12 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     }
 
     @Override
+    public List<MenuEntity> queryAllMenuList() {
+        List<MenuEntity> list = loginDao.queryMenuList(new MenuEntity());
+        return groupSortMenu(list);
+    }
+
+    @Override
     public void saveMenuEntity(MenuEntity entity) {
         entity.initial();
         loginDao.saveMenuEntity(entity);
@@ -185,6 +201,8 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     public void updateMenuEntity(MenuEntity entity) {
         entity.update();
         loginDao.updateMenuEntity(entity);
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        resetSessionUserInfo(sra.getRequest(), null);
     }
 
     @Override
@@ -195,10 +213,11 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     @Override
     public void updateRoleMenus(RoleMenuEntity roleMenuEntity) {
         loginDao.deleteMenuEntities(roleMenuEntity.getRole().getId());
-        context.getBean(JdbcTemplate.class).batchUpdate("insert into h_zkc_role_menus(role_id,menu_id) values(?,?)", new BatchPreparedStatementSetter() {
+        context.getBean(JdbcTemplate.class).batchUpdate("insert into h_role_menus(role_id,menu_id) values(?,?)", new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 MenuEntity me = roleMenuEntity.getMenus().get(i);
+                log.info("保存菜单权限, role_id: {}, menu_id: {}", roleMenuEntity.getRole().getId(), me.getId());
                 ps.setLong(1, roleMenuEntity.getRole().getId());
                 ps.setLong(2, me.getId());
             }
@@ -208,6 +227,8 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
                 return roleMenuEntity.getMenus().size();
             }
         });
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        resetSessionUserInfo(sra.getRequest(), null);
     }
 
     @Override
@@ -216,20 +237,59 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
         log.info("查询到用户信息: {}", user);
         if (StringUtils.equals(user.getPassword(), login.getPassword())) {
             log.info("密码验证一致");
-            HttpSession session = request.getSession(true);
-            // 创建会话对象
-            UserInfo ui = new UserInfo();
-            ui.setUserId(user.getId());
-            ui.setUserName(user.getUsername());
-            ui.setRoleId(user.getRoleId());
-            ui.setRoleName(user.getRoleName());
-            ui.setMenus(loginDao.queryRoleMenus(user.getRoleId()));
-            session.setAttribute("user", ui);
-            log.info("创建新会话: {}", session.getId());
-            sessions.put(session.getId(), session);
+            resetSessionUserInfo(request, user);
         } else {
             throw new IllegalArgumentException("密码错误，请重试");
         }
+    }
+
+    private void resetSessionUserInfo(HttpServletRequest request, UserEntity user) {
+        HttpSession session;
+        String logKey = "创建";
+        if (user == null) {
+            session = request.getSession();
+            UserInfo oldUser = (UserInfo) session.getAttribute("user");
+            user = loginDao.queryUserByName(oldUser.getUserName());
+            logKey = "更新";
+        } else {
+            session = request.getSession(true);
+        }
+        // 创建会话对象
+        UserInfo ui = new UserInfo();
+        ui.setUserId(user.getId());
+        ui.setUserName(user.getUsername());
+        ui.setRoleId(user.getRoleId());
+        ui.setRoleName(user.getRoleName());
+        List<MenuEntity> list = loginDao.queryRoleMenus2(user.getRoleId());
+        List<MenuEntity> confMenus = groupSortMenu(list);
+        ui.setMenus(confMenus);
+        session.setAttribute("user", ui);
+        log.info("{}会话, id: {}, user: {}", logKey, session.getId(), GsonUtils.toJson(ui));
+        if (StringUtils.equals("创建", logKey)) {
+            sessions.put(session.getId(), session);
+        }
+    }
+
+    // 对菜单进行分组排序
+    private List<MenuEntity> groupSortMenu(List<MenuEntity> menus) {
+        if (CollectionUtils.isEmpty(menus)) {
+            return Collections.emptyList();
+        }
+        List<MenuEntity> level1List = menus.stream().filter(m -> m.getMenuLevel() == 1).sorted(Comparator.comparing(m -> m.getOrderIndex())).collect(Collectors.toList());
+        Map<Long, List<MenuEntity>> level2Group = menus.stream().filter(m -> m.getMenuLevel() == 2).collect(Collectors.groupingBy(m -> m.getParentId()));
+        for (Map.Entry<Long, List<MenuEntity>> e : level2Group.entrySet()) {
+            e.getValue().stream().sorted(Comparator.comparing(m -> m.getOrderIndex())).collect(Collectors.toList());
+        }
+        for (MenuEntity m : level1List) {
+            List<MenuEntity> sub = level2Group.get(m.getId());
+            if (CollectionUtils.isNotEmpty(sub)) {
+                m.setMenus(sub);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("权限内的菜单数据: {}", GsonUtils.toJson(level1List));
+        }
+        return level1List;
     }
 
     @Override
@@ -265,3 +325,4 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
         }
     }
 }
+

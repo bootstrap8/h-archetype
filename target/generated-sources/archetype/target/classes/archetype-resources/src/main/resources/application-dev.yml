@@ -22,6 +22,11 @@ mybatis:
     - classpath*:**/mapper/mysql/*Mapper.xml
   config-location: classpath:jpaConfig-mysql.xml
 
+tabula:
+  enabled: false
+  dialect: mysql
+  schema: openstack
+
 login:
   enabled: false
   dialect: mysql
