@@ -14,6 +14,7 @@ import lombok.Data;
 @Data
 public class UserEntity implements DictModel, DictAware {
     private Long id;
+    private String app;
     private String username;
     private String password;
     private Long roleId;

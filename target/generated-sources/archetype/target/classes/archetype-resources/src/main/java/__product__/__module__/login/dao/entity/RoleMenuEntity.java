@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 public class RoleMenuEntity {
+    private String app;
     private RoleEntity role;
     private List<MenuEntity> menus;
 

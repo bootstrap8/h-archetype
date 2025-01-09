@@ -53,7 +53,7 @@ export default (config: any) => {
     // 关闭过度效果
     loadingInstance.close()
     if (error.response.status == 401) {
-      router.push({path: '/app/login'})
+      router.push({path: '/login'})
       return Promise.resolve({data: {state: 'ERROR', body: '会话失效'}});
     }
     return Promise.reject(error);

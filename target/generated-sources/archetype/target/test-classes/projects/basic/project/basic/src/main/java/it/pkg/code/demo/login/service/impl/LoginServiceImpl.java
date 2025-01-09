@@ -24,6 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,6 +64,9 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     @Autowired
     private MapDictHelperImpl dict;
 
+    @Value("${spring.application.name}")
+    private String app;
+
     private Cache<String, HttpSession> sessions;
 
     @Override
@@ -99,6 +103,7 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
 
     @Override
     public PageInfo<RoleEntity> queryRoleList(int pageNum, int pageSize, RoleEntity q) {
+        q.withApp(context);
         if (pageNum < 0) {
             PageInfo<RoleEntity> pg = new PageInfo<>(loginDao.queryRoleList(q));
             return pg;
@@ -112,29 +117,32 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     @Override
     public void saveRoleEntity(RoleEntity entity) {
         entity.initial();
+        entity.withApp(context);
         loginDao.saveRoleEntity(entity);
     }
 
     @Override
     public void updateRoleEntity(RoleEntity entity) {
         entity.update();
+        entity.withApp(context);
         loginDao.updateRoleEntity(entity);
     }
 
     @Override
     public void deleteRoleEntity(Long id) {
-        loginDao.deleteMenuEntities(id);
-        loginDao.deleteUserEntities(id);
-        loginDao.deleteRoleEntity(id);
+        loginDao.deleteMenuEntities(app, id);
+        loginDao.deleteUserEntities(app, id);
+        loginDao.deleteRoleEntity(app, id);
     }
 
     @Override
     public List<Map> queryRoleMenus(Long id) {
-        return loginDao.queryRoleMenus(id);
+        return loginDao.queryRoleMenus(app, id);
     }
 
     @Override
     public PageInfo<UserEntity> queryUserList(int pageNum, int pageSize, UserEntity q) {
+        q.setApp(app);
         PageInfo<UserEntity> pg = PageHelper.startPage(pageNum, pageSize).doSelectPageInfo(() -> loginDao.queryUserList(q));
         pg.getList().forEach(e -> e.convertDict(context));
         return pg;
@@ -143,12 +151,14 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
     @Override
     public void saveUserEntity(UserEntity entity) {
         entity.initial();
+        entity.setApp(app);
         loginDao.saveUserEntity(entity);
     }
 
     @Override
     public void updateUserEntity(UserEntity entity) {
         entity.update();
+        entity.setApp(app);
         loginDao.updateUserEntity(entity);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         resetSessionUserInfo(sra.getRequest(), null);
@@ -156,23 +166,24 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
 
     @Override
     public void deleteUserEntity(Long id) {
-        loginDao.deleteUserEntity(id);
+        loginDao.deleteUserEntity(app, id);
     }
 
     @Override
     public void updatePassword(PasswordModify passwordModify) {
-        UserEntity ue = loginDao.queryUserEntity(passwordModify.getId());
+        UserEntity ue = loginDao.queryUserEntity(app, passwordModify.getId());
         if (ue == null) {
             throw new UnsupportedOperationException("用户不存在");
         }
         if (!StringUtils.equals(passwordModify.getOldPassword(), ue.getPassword())) {
             throw new IllegalArgumentException("老密码不对");
         }
-        loginDao.updateUserPassword(passwordModify);
+        loginDao.updateUserPassword(app, passwordModify);
     }
 
     @Override
     public PageInfo<MenuEntity> queryMenuList(int pageNum, int pageSize, MenuEntity q) {
+        q.setApp(app);
         if (pageNum < 0) {
             List<MenuEntity> menus = loginDao.queryMenuList(q);
             PageInfo<MenuEntity> pg = new PageInfo<>(menus);
@@ -187,19 +198,23 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
 
     @Override
     public List<MenuEntity> queryAllMenuList() {
-        List<MenuEntity> list = loginDao.queryMenuList(new MenuEntity());
+        MenuEntity me = new MenuEntity();
+        me.setApp(app);
+        List<MenuEntity> list = loginDao.queryMenuList(me);
         return groupSortMenu(list);
     }
 
     @Override
     public void saveMenuEntity(MenuEntity entity) {
         entity.initial();
+        entity.setApp(app);
         loginDao.saveMenuEntity(entity);
     }
 
     @Override
     public void updateMenuEntity(MenuEntity entity) {
         entity.update();
+        entity.setApp(app);
         loginDao.updateMenuEntity(entity);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         resetSessionUserInfo(sra.getRequest(), null);
@@ -207,19 +222,23 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
 
     @Override
     public void deleteMenuEntity(Long id) {
-        loginDao.deleteMenuEntity(id);
+        loginDao.deleteMenuEntity(app, id);
+        loginDao.deleteMenuForRole(app, id);
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        resetSessionUserInfo(sra.getRequest(), null);
     }
 
     @Override
     public void updateRoleMenus(RoleMenuEntity roleMenuEntity) {
-        loginDao.deleteMenuEntities(roleMenuEntity.getRole().getId());
-        context.getBean(JdbcTemplate.class).batchUpdate("insert into h_role_menus(role_id,menu_id) values(?,?)", new BatchPreparedStatementSetter() {
+        loginDao.deleteMenuEntities(app, roleMenuEntity.getRole().getId());
+        context.getBean(JdbcTemplate.class).batchUpdate("insert into h_role_menus(app,role_id,menu_id) values(?,?,?)", new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 MenuEntity me = roleMenuEntity.getMenus().get(i);
                 log.info("保存菜单权限, role_id: {}, menu_id: {}", roleMenuEntity.getRole().getId(), me.getId());
-                ps.setLong(1, roleMenuEntity.getRole().getId());
-                ps.setLong(2, me.getId());
+                ps.setString(1, app);
+                ps.setLong(2, roleMenuEntity.getRole().getId());
+                ps.setLong(3, me.getId());
             }
 
             @Override
@@ -233,7 +252,7 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
 
     @Override
     public void login(LoginInfo login, HttpServletRequest request, HttpServletResponse response) {
-        UserEntity user = loginDao.queryUserByName(login.getUsername());
+        UserEntity user = loginDao.queryUserByName(app, login.getUsername());
         log.info("查询到用户信息: {}", user);
         if (StringUtils.equals(user.getPassword(), login.getPassword())) {
             log.info("密码验证一致");
@@ -249,7 +268,7 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
         if (user == null) {
             session = request.getSession();
             UserInfo oldUser = (UserInfo) session.getAttribute("user");
-            user = loginDao.queryUserByName(oldUser.getUserName());
+            user = loginDao.queryUserByName(app, oldUser.getUserName());
             logKey = "更新";
         } else {
             session = request.getSession(true);
@@ -260,7 +279,7 @@ public class LoginServiceImpl implements LoginService, InitializingBean {
         ui.setUserName(user.getUsername());
         ui.setRoleId(user.getRoleId());
         ui.setRoleName(user.getRoleName());
-        List<MenuEntity> list = loginDao.queryRoleMenus2(user.getRoleId());
+        List<MenuEntity> list = loginDao.queryRoleMenus2(app, user.getRoleId());
         List<MenuEntity> confMenus = groupSortMenu(list);
         ui.setMenus(confMenus);
         session.setAttribute("user", ui);

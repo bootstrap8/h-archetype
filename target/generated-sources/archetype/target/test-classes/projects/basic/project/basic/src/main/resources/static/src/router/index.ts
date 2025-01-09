@@ -2,19 +2,16 @@ import {createRouter, createWebHashHistory} from 'vue-router'
 
 const routes = [
     {
-        path: '/',
-        name: '主页面(菜单在顶部)',
-        component: () => import('@/views/main/index.vue')
-    },
-    {
-        path: '/app/login',
-        name: '登录',
+        path: '/login',
         component: () => import('@/views/login/login.vue')
     },
     {
-        path: '/main/index',
-        name: '主页面(菜单在顶部)',
-        component: () => import('@/views/main/index.vue')
+        path: '/main_top',
+        component: () => import('@/views/main/top.vue')
+    },
+    {
+        path: '/main_left',
+        component: () => import('@/views/main/left.vue')
     }
 ]
 

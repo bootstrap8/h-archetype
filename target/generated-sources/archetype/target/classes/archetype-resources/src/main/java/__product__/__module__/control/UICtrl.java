@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "示例接口")
 @Slf4j
-@RequestMapping(path = "/ui")
+@RequestMapping(path = "/${module}-ui")
 public class UICtrl {
     @RequestMapping(path = "/hello", method = RequestMethod.GET)
     public String hello() {

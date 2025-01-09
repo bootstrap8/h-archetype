@@ -17,6 +17,7 @@ import java.util.List;
 @Data
 public class MenuEntity implements DictModel, DictAware {
     private Long id;
+    private String app;
     private String name;
     private String url;
     private Long parentId = 0L;

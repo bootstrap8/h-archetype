@@ -1,4 +1,4 @@
-#set( $symbol_pound = '#' )
+#set($symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
 package ${package}.${product}.${module}.login.dao.entity;
@@ -17,6 +17,7 @@ import lombok.Data;
 @Data
 public class RoleEntity implements DictModel, DictAware {
     private Long id;
+    private String app;
     private String name;
     private String desc;
     private Long createdAt;
@@ -41,5 +42,9 @@ public class RoleEntity implements DictModel, DictAware {
 
     public void update() {
         this.updatedAt = FormatTime.nowSecs();
+    }
+
+    public void withApp(SpringContext context) {
+        this.app = context.getProperty("spring.application.name");
     }
 }

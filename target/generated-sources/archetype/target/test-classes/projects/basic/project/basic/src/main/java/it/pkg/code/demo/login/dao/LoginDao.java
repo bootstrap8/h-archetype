@@ -26,25 +26,25 @@ public interface LoginDao {
 
     void updateRoleEntity(RoleEntity entity);
 
-    void deleteRoleEntity(@Param("id") Long id);
+    void deleteRoleEntity(@Param("app") String app, @Param("id") Long id);
 
-    List<Map> queryRoleMenus(@Param("id") Long id);
+    List<Map> queryRoleMenus(@Param("app") String app, @Param("id") Long id);
 
-    List<MenuEntity> queryRoleMenus2(@Param("id") Long id);
+    List<MenuEntity> queryRoleMenus2(@Param("app") String app, @Param("id") Long id);
 
     List<UserEntity> queryUserList(UserEntity q);
 
-    UserEntity queryUserEntity(@Param("id") Long id);
+    UserEntity queryUserEntity(@Param("app") String app, @Param("id") Long id);
 
     void saveUserEntity(UserEntity entity);
 
     void updateUserEntity(UserEntity entity);
 
-    void deleteUserEntity(@Param("id") Long id);
+    void deleteUserEntity(@Param("app") String app, @Param("id") Long id);
 
-    void deleteUserEntities(@Param("roleId") Long roleId);
+    void deleteUserEntities(@Param("app") String app, @Param("roleId") Long roleId);
 
-    void updateUserPassword(PasswordModify passwordModify);
+    void updateUserPassword(@Param("app") String app, @Param("modify") PasswordModify passwordModify);
 
     List<MenuEntity> queryMenuList(MenuEntity q);
 
@@ -52,9 +52,10 @@ public interface LoginDao {
 
     void updateMenuEntity(MenuEntity entity);
 
-    void deleteMenuEntity(@Param("id") Long id);
+    void deleteMenuEntity(@Param("app") String app, @Param("id") Long id);
 
-    void deleteMenuEntities(@Param("roleId") Long roleId);
+    void deleteMenuEntities(@Param("app") String app, @Param("roleId") Long roleId);
 
-    UserEntity queryUserByName(@Param("name") String name);
+    void deleteMenuForRole(@Param("app") String app, @Param("menuId") Long menuId);
+    UserEntity queryUserByName(@Param("app") String app, @Param("name") String name);
 }

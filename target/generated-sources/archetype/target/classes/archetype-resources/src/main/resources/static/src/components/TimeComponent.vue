@@ -79,7 +79,7 @@ onMounted(() => {
 
 <style scoped>
 .time-component {
-  font-size: 0.5em;
+  font-size: 0.6em;
   font-family: Arial, sans-serif;
   color: orange;
   margin-right: 5px;

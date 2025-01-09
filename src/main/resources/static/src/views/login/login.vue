@@ -105,7 +105,7 @@ function confirmAnswer() {
       data: body
     }).then((res: any) => {
       if (res.data.state == 'OK') {
-        router.push({path: '/main/index'})
+        router.push({path: '/main_left'})
       } else {
         msg(res.data.errorMessage, 'warning')
       }

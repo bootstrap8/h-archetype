@@ -5,11 +5,13 @@
         CREATE TABLE `h_users`
         (
             `id`         int AUTO_INCREMENT PRIMARY KEY comment '主键',
-            `username`   VARCHAR(255) NOT NULL UNIQUE comment '账号名',
+            `app`        varchar(255) NOT NULL comment '应用',
+            `username`   VARCHAR(255) NOT NULL comment '账号名',
             `password`   VARCHAR(255) NOT NULL comment '密码',
             `role_id`    NUMERIC(10) comment '角色ID',
             `created_at` NUMERIC(20) comment '创建时间',
-            `updated_at` NUMERIC(20) comment '更新时间'
+            `updated_at` NUMERIC(20) comment '更新时间',
+            UNIQUE (`app`, `username`)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>
@@ -18,10 +20,12 @@
         CREATE TABLE `h_roles`
         (
             `id`          int AUTO_INCREMENT PRIMARY KEY comment '角色ID',
+            `app`         varchar(255) NOT NULL comment '应用',
             `name`        VARCHAR(255) NOT NULL comment '角色名称',
             `description` VARCHAR(500) comment '角色描述',
             `created_at`  NUMERIC(20) comment '创建时间',
-            `updated_at`  NUMERIC(20) comment '更新时间'
+            `updated_at`  NUMERIC(20) comment '更新时间',
+            UNIQUE (`app`, `name`)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>
@@ -30,6 +34,7 @@
         CREATE TABLE `h_menus`
         (
             `id`          int AUTO_INCREMENT PRIMARY KEY comment '菜单ID',
+            `app`         varchar(255) NOT NULL comment '应用',
             `name`        VARCHAR(255) NOT NULL comment '菜单名称',
             `url`         VARCHAR(255) comment '菜单链接',
             `parent_id`   NUMERIC(10)  DEFAULT 0 comment '父菜单ID',
@@ -37,7 +42,8 @@
             `order_index` NUMERIC(10)  DEFAULT 0 comment '菜单顺序',
             `icon_name`   varchar(255) DEFAULT 'LogIcon' comment '菜单图标',
             `created_at`  NUMERIC(20) comment '创建时间',
-            `updated_at`  NUMERIC(20) comment '修改时间'
+            `updated_at`  NUMERIC(20) comment '修改时间',
+            UNIQUE (`app`, `url`)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>
@@ -45,9 +51,10 @@
     <update id="createRoleMenus">
         CREATE TABLE `h_role_menus`
         (
-            `role_id` NUMERIC(20) NOT NULL comment '角色ID',
-            `menu_id` NUMERIC(20) NOT NULL comment '菜单ID',
-            primary key (role_id,menu_id)
+            `app`     varchar(255) NOT NULL comment '应用',
+            `role_id` NUMERIC(20)  NOT NULL comment '角色ID',
+            `menu_id` NUMERIC(20)  NOT NULL comment '菜单ID',
+            primary key (`app`, `role_id`, `menu_id`)
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>
