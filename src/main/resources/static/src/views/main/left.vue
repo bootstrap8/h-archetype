@@ -1,15 +1,13 @@
 <template>
   <div class="container">
-    <el-container
-        style="height: calc(100vh - 10px); margin: 5px; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px 0;">
+    <el-container style="height: calc(100vh - 10px); margin: 5px; overflow: hidden; border-radius: 8px; box-shadow: 0 1px 3px 0;">
       <el-header class="header">
         <div style="display: flex">
           <el-icon size="24">
             <component :is="getIconComponent('HomeIcon')"/>
           </el-icon>
-          <span style="font-size: 0.9em;font-family: 'Nanfeng_BMYeonsung', 'Microsoft YaHei'">${artifactId}</span>
+          <span style="font-size: 0.9em;font-family: 'Nanfeng_BMYeonsung', 'Microsoft YaHei'">h-hello</span>
         </div>
-
         <div style="display: flex; align-items: center;">
           <TimeComponent/>
           <span style="margin-right: 10px;margin-left:0px; padding:0;font-size: 0.6em;">,
@@ -90,13 +88,11 @@
             </template>
           </el-menu>
         </el-aside>
-
         <!-- 右侧内容区域 -->
-        <el-container style="overflow: hidden; background-color: #f5f7fa;margin-top: 50px">
+        <el-container style="height: calc(100vh - 60px); overflow: hidden; background-color: #f5f7fa;margin-top: 50px">
           <div style="width: 100%;">
             <!-- 顶部区域 -->
-            <div
-                style="height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background-color: #fff; border-bottom: 1px solid #e4e7ed;">
+            <div style="height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background-color: #fff; border-bottom: 1px solid #e4e7ed;">
               <!-- 导航面包屑 -->
               <el-breadcrumb separator="/">
                 <el-breadcrumb-item>首页</el-breadcrumb-item>
@@ -105,7 +101,7 @@
             </div>
 
             <!-- Tab 页区域 -->
-            <div style="height: calc(100% - 50px);">
+            <div style="height: 100%;">
               <el-tabs
                   v-model="activeTab"
                   type="card"
@@ -118,7 +114,7 @@
                     :key="tab.name"
                     :label="tab.label"
                     :name="tab.name"
-                    style="height: 100%; overflow-y: auto;"
+                    style="height: calc(100vh - 75px); overflow-y: auto;"
                 >
                   <component :is="tab.component"/>
                 </el-tab-pane>
