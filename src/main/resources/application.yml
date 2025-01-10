@@ -48,6 +48,8 @@ spring:
             locations: classpath:/static/hbq969-dict/
           - handlers: /hbq969-tabula/**
             locations: classpath:/static/hbq969-tabula/
+          - handlers: /hbq969-sm/**
+            locations: classpath:/static/hbq969-sm/
           - handlers: /${module}-ui/**
             locations: classpath:/static/${module}-ui/
         enabled: true
@@ -171,15 +173,24 @@ tabula:
 login:
   enabled: false
   cookie-max-age-sec: 1800
-  exclude-urls:
-    - "/**/*.js"
-    - "/**/*.css"
-    - "/**/*.png"
-    - "/**/*.jpg"
-    - "/**/*.map"
-    - "/**/*.html"
-    - "/**/*.ico"
-    - "/**/login"
-    - "/**/logout"
-    - "/**/error"
   dialect: embedded
+  include-urls:
+    - "/hbq969-sm/**"
+    - "/hbq969-dict/**"
+    - "/hbq969-tabula/**"
+    - "/common/encrypt/**"
+    - "/ui-gw/**"
+    - "/**/doc.html"
+    - "/**/swagger-ui.html"
+    - "/**/api-docs"
+  exclude-urls:
+    - "/**/error"
+    - "/common/health"
+    - "/hbq969-sm/index.html"
+    - "/hbq969-sm/**/*.js"
+    - "/hbq969-sm/**/*.css"
+    - "/hbq969-sm/**/*.png"
+    - "/hbq969-sm/**/*.jpg"
+    - "/hbq969-sm/**/*.map"
+    - "/hbq969-sm/**/*.ico"
+    - "/hbq969-sm/**/login"

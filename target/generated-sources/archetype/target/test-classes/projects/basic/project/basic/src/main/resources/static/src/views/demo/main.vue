@@ -65,9 +65,10 @@ onMounted(()=>{
 <style scoped>
 .container {
   flex-grow: 1;
-  padding: 20px 15%;
-  overflow: auto;
-  width: 60%;
-
+  padding: 0 2%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 96%;
+  height: calc(100vh + 60px);
 }
 </style>

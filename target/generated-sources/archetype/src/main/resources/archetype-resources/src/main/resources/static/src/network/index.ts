@@ -14,13 +14,11 @@ export default (config: any) => {
       // dev环境
       {
         baseURL: process.env.VUE_APP_DEV_BASE_URL,
-        timeout: 5000,
         headers: { Authentication: store.getters.getAuthentication || defaultAuthentication }
       } :
       // prod环境
       {
         baseURL: process.env.VUE_APP_PROD_BASE_URL,
-        timeout: 5000,
         headers: { Authentication: store.getters.getAuthentication || defaultAuthentication }
       });
 
@@ -52,10 +50,6 @@ export default (config: any) => {
     // 对响应错误做点什么
     // 关闭过度效果
     loadingInstance.close()
-    if (error.response.status == 401) {
-      router.push({path: '/login'})
-      return Promise.resolve({data: {state: 'ERROR', body: '会话失效'}});
-    }
     return Promise.reject(error);
   });
 

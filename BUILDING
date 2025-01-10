@@ -1,4 +1,4 @@
-Build Instructions for h-archetype
+Build Instructions for ${artifactId}
 
 ====================================================
 
@@ -6,7 +6,7 @@ Build Instructions for h-archetype
 
     JDK 1.8+ is required in order to compile and run this app.
 
-    h-archetype utilizes Maven as a distribution management and packaging tool. Version 3.0.3 or later is required.
+    ${artifactId} utilizes Maven as a distribution management and packaging tool. Version 3.0.3 or later is required.
     Maven installation and configuration instructions can be found here:
 
     http://maven.apache.org/run-maven/index.html
@@ -16,5 +16,9 @@ Build Instructions for h-archetype
 
     Execute the following command in order to build the tar.gz packages and install JAR into local repository:
 
-	#build h-archetype
+	#build ${artifactId}
+	$ cd ${artifactId}/src/main/resources/static
+	$ nvm use 16
+	$ npm i && npm run build
+	$ cd ${artifactId}
     $ mvn -Dmaven.test.skip=true clean package -U

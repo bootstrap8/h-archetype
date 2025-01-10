@@ -16,5 +16,9 @@ Build Instructions for basic
 
     Execute the following command in order to build the tar.gz packages and install JAR into local repository:
 
-	#build basic
+	# build basic
+	$ cd basic/src/main/resources/static
+	$ nvm use 16
+	$ npm i && npm run build
+	$ cd basic
     $ mvn -Dmaven.test.skip=true clean package -U
