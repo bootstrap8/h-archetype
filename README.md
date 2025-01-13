@@ -101,23 +101,29 @@ tabula:
 
 ```yaml
 login:
-  enabled: true
-  # 会话Cookie失效时长
+  enabled: false
   cookie-max-age-sec: 1800
-  # 不需要会话拦截的url，一般场景下将业务接口排除掉，登录功能尽量只拦截模块自身维护的接口
+  dialect: embedded
+  include-urls:
+    - "/hbq969-sm/**"
+    - "/hbq969-dict/**"
+    - "/hbq969-tabula/**"
+    - "/common/encrypt/**"
+    - "/ui-gw/**"
+    - "/**/doc.html"
+    - "/**/swagger-ui.html"
+    - "/**/api-docs"
   exclude-urls:
-    - "/**/*.js"
-    - "/**/*.css"
-    - "/**/*.png"
-    - "/**/*.jpg"
-    - "/**/*.map"
-    - "/**/*.html"
-    - "/**/*.ico"
-    - "/**/login"
-    - "/**/logout"
     - "/**/error"
-  # 使用哪种数据库
-  dialect: mysql
+    - "/common/health"
+    - "/hbq969-sm/index.html"
+    - "/hbq969-sm/**/*.js"
+    - "/hbq969-sm/**/*.css"
+    - "/hbq969-sm/**/*.png"
+    - "/hbq969-sm/**/*.jpg"
+    - "/hbq969-sm/**/*.map"
+    - "/hbq969-sm/**/*.ico"
+    - "/hbq969-sm/**/login"
 ```
 
 
