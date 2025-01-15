@@ -54,10 +54,8 @@ const _ = (window as any).ResizeObserver;
 <style scoped>
 .container {
   flex-grow: 1;
-  padding: 0 2%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  padding: 20px 2%;
+  overflow: auto;
   width: 96%;
-  height: calc(100vh + 60px);
 }
 </style>
